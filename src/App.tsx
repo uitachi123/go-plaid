@@ -1,56 +1,97 @@
-import { useState } from 'react';
-import './App.css';
-import { Button, Table } from 'react-bootstrap';
+import React, { useEffect, useContext, useCallback } from "react";
 
-interface User {
-  name: string
-  email: string
-}
+import Header from "./Components/Headers";
+import Products from "./Components/ProductTypes/Products";
+import Items from "./Components/ProductTypes/Items";
+import Context from "./Context";
 
-function App() {
-  const [show, setShow] = useState(false)
-  const [data, setData] = useState([] as User[])
-  const listUsers = () => {
-    console.log("fetch api")
-    fetch("/users")
-      .then((response) => response.json())
-      .then((json) => {
-        console.log(json);
-        setData(json)
-        setShow(true)
+import styles from "./App.module.scss";
+
+const App = () => {
+  const { linkSuccess, isItemAccess, dispatch } = useContext(Context);
+
+  const getInfo = useCallback(async () => {
+    const response = await fetch("/api/info", { method: "POST" });
+    if (!response.ok) {
+      dispatch({ type: "SET_STATE", state: { backend: false } });
+      return { paymentInitiation: false };
+    }
+    const data = await response.json();
+    const paymentInitiation: boolean = data.products.includes(
+      "payment_initiation"
+    );
+    dispatch({
+      type: "SET_STATE",
+      state: {
+        products: data.products,
+      },
+    });
+    return { paymentInitiation };
+  }, [dispatch]);
+
+  const generateToken = useCallback(
+    async (paymentInitiation: any) => {
+      const path = paymentInitiation
+        ? "/api/create_link_token_for_payment"
+        : "/api/create_link_token";
+      const response = await fetch(path, {
+        method: "POST",
       });
-  }
-  let table = <div></div>
-  if (show) {
-    table = (
-      <div className="AppInfo">
-        <Table striped bordered hover variant="dark">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((user, index) =>
-              <tr key={index}>
-                <th>{index}</th>
-                <th>{user.name}</th>
-                <th>{user.email}</th>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </div>
-    )
-  }
+      if (!response.ok) {
+        dispatch({ type: "SET_STATE", state: { linkToken: null } });
+        return;
+      }
+      const data = await response.json();
+      if (data) {
+        if (data.error != null) {
+          dispatch({
+            type: "SET_STATE",
+            state: {
+              linkToken: null,
+              linkTokenError: data.error,
+            },
+          });
+          return;
+        }
+        dispatch({ type: "SET_STATE", state: { linkToken: data.link_token } });
+      }
+      localStorage.setItem("link_token", data.link_token); //to use later for Oauth
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    const init = async () => {
+      const { paymentInitiation } = await getInfo(); // used to determine which path to take when generating token
+      // do not generate a new token for OAuth redirect; instead
+      // setLinkToken from localStorage
+      if (window.location.href.includes("?oauth_state_id=")) {
+        dispatch({
+          type: "SET_STATE",
+          state: {
+            linkToken: localStorage.getItem("link_token"),
+          },
+        });
+        return;
+      }
+      generateToken(paymentInitiation);
+    };
+    init();
+  }, [dispatch, generateToken, getInfo]);
+
   return (
-    <div className="App">
-      <Button onClick={listUsers}>Click to show users</Button>
-      {table}
+    <div className={styles.App}>
+      <div className={styles.container}>
+        <Header />
+        {linkSuccess && isItemAccess && (
+          <>
+            <Products />
+            <Items />
+          </>
+        )}
+      </div>
     </div>
   );
-}
+};
 
 export default App;
