@@ -10,6 +10,7 @@ import (
 	"github.com/uitachi123/go-plaid/pkg/api"
 	"github.com/uitachi123/go-plaid/pkg/db"
 	"github.com/uitachi123/go-plaid/pkg/echo"
+	"github.com/uitachi123/go-plaid/pkg/plaid"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -57,6 +58,25 @@ func main() {
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "OK")
 	})
+
+	// endpoints for plaid
+	mux.HandleFunc("/api/set_access_token", plaid.GetAccessToken)
+	mux.HandleFunc("/api/create_link_token_for_payment", plaid.CreateLinkTokenForPayment)
+	mux.HandleFunc("/api/auth", plaid.Auth)
+	mux.HandleFunc("/api/accounts", plaid.Accounts)
+	mux.HandleFunc("/api/balance", plaid.Balance)
+	mux.HandleFunc("/api/item", plaid.Item)
+	mux.HandleFunc("/api/identity", plaid.Identity)
+	mux.HandleFunc("/api/transactions", plaid.Transactions)
+	mux.HandleFunc("/api/payment", plaid.Payment)
+	mux.HandleFunc("/api/create_public_token", plaid.CreatePublicToken)
+	mux.HandleFunc("/api/create_link_token", plaid.CreateLinkToken)
+	mux.HandleFunc("/api/investments_transactions", plaid.InvestmentTransactions)
+	mux.HandleFunc("/api/holdings", plaid.Holdings)
+	mux.HandleFunc("/api/assets", plaid.Assets)
+	mux.HandleFunc("/api/transfer", plaid.Transfer)
+	mux.HandleFunc("/api/info", plaid.Info)
+
 	// listen to port
 	http.ListenAndServe(":"+*port, mux)
 }
