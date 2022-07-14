@@ -456,6 +456,10 @@ func Holdings(w http.ResponseWriter, r *http.Request) {
 }
 
 func Info(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		io.WriteString(w, "Method not supported")
+		return
+	}
 	b, err := json.Marshal(map[string]interface{}{
 		"item_id":      itemID,
 		"access_token": accessToken,
