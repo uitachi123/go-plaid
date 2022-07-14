@@ -16,7 +16,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/joho/godotenv"
 	plaid "github.com/plaid/plaid-go/v3/plaid"
 )
 
@@ -38,20 +37,13 @@ var environments = map[string]plaid.Environment{
 }
 
 func init() {
-	// load env vars from .env file
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error when loading environment variables from .env file %w", err)
-	}
-
 	// set constants from env
 	PLAID_CLIENT_ID = os.Getenv("PLAID_CLIENT_ID")
 	PLAID_SECRET = os.Getenv("PLAID_SECRET")
 
 	if PLAID_CLIENT_ID == "" || PLAID_SECRET == "" {
-		log.Fatal("Error: PLAID_SECRET or PLAID_CLIENT_ID is not set. Did you copy .env.example to .env and fill it out?")
+		log.Fatal("Error: PLAID_SECRET or PLAID_CLIENT_ID is not set. Did you set it in env vars?")
 	}
-
 	PLAID_ENV = os.Getenv("PLAID_ENV")
 	PLAID_PRODUCTS = os.Getenv("PLAID_PRODUCTS")
 	PLAID_COUNTRY_CODES = os.Getenv("PLAID_COUNTRY_CODES")
@@ -515,6 +507,7 @@ func CreateLinkToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	io.WriteString(w, string(b))
+	log.Printf("created link: %s", string(b))
 }
 
 func convertCountryCodes(countryCodeStrs []string) []plaid.CountryCode {
@@ -541,6 +534,7 @@ func convertProducts(productStrs []string) []plaid.Products {
 func linkTokenCreate(
 	paymentInitiation *plaid.LinkTokenCreateRequestPaymentInitiation,
 ) (string, error) {
+	log.Println("creating link token...")
 	ctx := context.Background()
 	countryCodes := convertCountryCodes(strings.Split(PLAID_COUNTRY_CODES, ","))
 	products := convertProducts(strings.Split(PLAID_PRODUCTS, ","))

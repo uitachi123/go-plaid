@@ -1,6 +1,8 @@
 {
   "name": "go-plaid",
   "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -22,7 +24,6 @@
     "sass-loader": "^10.1.1",
     "web-vitals": "^0.2.4"
   },
-  "proxy": "http://localhost:8080",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

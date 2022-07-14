@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/hashicorp/go-memdb v1.3.3
-	github.com/joho/godotenv v1.4.0
 	github.com/plaid/plaid-go/v3 v3.5.0
 	go.uber.org/zap v1.21.0
 )
