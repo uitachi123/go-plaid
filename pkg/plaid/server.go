@@ -58,10 +58,10 @@ func init() {
 		PLAID_COUNTRY_CODES = "US"
 	}
 	if PLAID_ENV == "" {
-		PLAID_ENV = "sandbox"
+		PLAID_ENV = "development"
 	}
 	if APP_PORT == "" {
-		APP_PORT = "8000"
+		APP_PORT = "8080"
 	}
 	if PLAID_CLIENT_ID == "" {
 		log.Fatal("PLAID_CLIENT_ID is not set. Make sure to fill out the .env file")
@@ -75,6 +75,7 @@ func init() {
 	configuration.AddDefaultHeader("PLAID-CLIENT-ID", PLAID_CLIENT_ID)
 	configuration.AddDefaultHeader("PLAID-SECRET", PLAID_SECRET)
 	configuration.UseEnvironment(environments[PLAID_ENV])
+	configuration.Debug = true
 	client = plaid.NewAPIClient(configuration)
 }
 
@@ -538,7 +539,6 @@ func convertProducts(productStrs []string) []plaid.Products {
 func linkTokenCreate(
 	paymentInitiation *plaid.LinkTokenCreateRequestPaymentInitiation,
 ) (string, error) {
-	log.Println("creating link token...")
 	ctx := context.Background()
 	countryCodes := convertCountryCodes(strings.Split(PLAID_COUNTRY_CODES, ","))
 	products := convertProducts(strings.Split(PLAID_PRODUCTS, ","))
@@ -566,7 +566,6 @@ func linkTokenCreate(
 	}
 
 	linkTokenCreateResp, _, err := client.PlaidApi.LinkTokenCreate(ctx).LinkTokenCreateRequest(*request).Execute()
-
 	if err != nil {
 		return "", err
 	}
