@@ -58,7 +58,7 @@ func init() {
 		PLAID_COUNTRY_CODES = "US"
 	}
 	if PLAID_ENV == "" {
-		PLAID_ENV = "development"
+		PLAID_ENV = "sandbox"
 	}
 	if APP_PORT == "" {
 		APP_PORT = "8080"
