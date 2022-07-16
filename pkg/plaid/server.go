@@ -96,6 +96,11 @@ func GetAccessToken(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "Method not supported")
 		return
 	}
+	err := r.ParseForm()
+	if err != nil {
+		io.WriteString(w, "Failed to parse POST form")
+		return
+	}
 	publicToken := r.PostForm.Get("public_token")
 	if publicToken == "" {
 		io.WriteString(w, "Cant find public token")
