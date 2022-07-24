@@ -22,7 +22,7 @@ make all
 ```
 
 # run
-PLAID_SECRET=<your plaid API Secret> PLAID_CLIENT_ID=<you plaid Client ID> make serve
+PLAID_SECRET=`your plaid API Secret` PLAID_CLIENT_ID=`your plaid Client ID` make serve
 
 # testing login
 [sandbox testing credentials](https://plaid.com/docs/quickstart/#sandbox-credentials)
