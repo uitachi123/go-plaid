@@ -1,9 +1,9 @@
 # go-plaid
 [Plaid](https://plaid.com//) is a safe way for apps to connect to financial accounts. To understand what they can offer better, this is a toy app to demonstrate some features of plaid APIs. Of course what `Plaid` can provide is way more than what are demonstrated here but hopefully this app could give you a sense about their business ambitions.
 
-# stripe API features to demostrate
-- [x] stripe product creation/deletion
-- [x] credit card payments (UI + validation callback)
+# plaid API features to demostrate
+- [x] plaid link to allow user to log in their bank account safely
+- [x] account operations such as checking account balance after successful authentication
 
 # screenshots
 ## sample accounts
