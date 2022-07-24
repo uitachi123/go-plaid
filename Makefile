@@ -3,7 +3,7 @@ PLAID_SECRET?="SECRET"
 PLAID_CLIENT_ID?="CLIENT_ID"
 
 .PHONY: all test clean build api ui serve test
-all: clean test deps build serve
+all: clean test deps build
 
 clean:
 	rm -rf ./go-plaid
